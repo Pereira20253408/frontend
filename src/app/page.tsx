@@ -897,8 +897,8 @@ export default function Home() {
                 {/* Proyección a 5 Años (Consenso Profesional) */}
                 <div className="mt-8 relative group">
                   <div className="absolute -inset-px bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-emerald-500/20 rounded-2xl blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-                  <div className="relative glass-card p-6 border border-white/10 bg-gradient-to-b from-[#18181b]/90 to-[#121214]/90 backdrop-blur-2xl rounded-2xl shadow-2xl overflow-hidden">
-                    <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-8 border-b border-white/5 pb-6">
+                  <div className="relative glass-card p-5 border border-white/10 bg-gradient-to-b from-[#18181b]/90 to-[#121214]/90 backdrop-blur-2xl rounded-2xl shadow-2xl overflow-hidden">
+                    <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-5 mb-5 border-b border-white/5 pb-5">
                       <div>
                         <div className="flex items-center gap-2.5 mb-1.5">
                           <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
@@ -913,22 +913,22 @@ export default function Home() {
                         </p>
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
-                        <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+                        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] shadow-[0_0_15px_rgba(16,185,129,0.15)]">
                           <div className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
                           <span className="font-bold">Optimista: {formatCurrency(data.analistas_targets?.alto || null)}</span>
                         </div>
-                        <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#60A5FA]/10 border border-[#60A5FA]/30 text-[#60A5FA] shadow-[0_0_15px_rgba(96,165,250,0.15)]">
+                        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#60A5FA]/10 border border-[#60A5FA]/30 text-[#60A5FA] shadow-[0_0_15px_rgba(96,165,250,0.15)]">
                           <div className="w-2 h-2 rounded-full bg-[#60A5FA] animate-pulse" />
                           <span className="font-bold">Moderado: {formatCurrency(data.analistas_targets?.moderado || null)}</span>
                         </div>
-                        <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] shadow-[0_0_15px_rgba(239,68,68,0.15)]">
+                        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] shadow-[0_0_15px_rgba(239,68,68,0.15)]">
                           <div className="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse" />
                           <span className="font-bold">Pesimista: {formatCurrency(data.analistas_targets?.bajo || null)}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="h-[340px] w-full mt-2 pr-4">
+                    <div className="h-[220px] w-full mt-2 pr-4">
                       <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart data={datosProyeccion} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                           <defs>
@@ -963,7 +963,7 @@ export default function Home() {
                       </ResponsiveContainer>
                     </div>
 
-                    <div className="mt-6 p-3.5 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] text-gray-400 gap-3">
+                    <div className="mt-4 p-3 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] text-gray-400 gap-3">
                       <div className="flex items-center gap-2.5">
                         <Info className="w-4 h-4 text-purple-400 flex-shrink-0" />
                         <span>Datos basados en el consenso consolidado de analistas institucionales en internet.</span>
