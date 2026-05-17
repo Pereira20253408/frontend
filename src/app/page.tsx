@@ -84,10 +84,11 @@ function TermTooltip({ term, definition }: { term: string, definition: string })
   );
 }
 
-function WatchlistCard({ item, removeFromWatchlist, formatCurrency }: { item: any, removeFromWatchlist: (ticker: string) => void, formatCurrency: (val: number | null) => string }) {
+function WatchlistCard({ item, removeFromWatchlist, formatCurrency, onSelectTicker }: { item: any, removeFromWatchlist: (ticker: string) => void, formatCurrency: (val: number | null) => string, onSelectTicker: (ticker: string) => void }) {
   const [alertaActiva, setAlertaActiva] = useState(item.seguimiento_activo ?? true);
 
-  const handleToggle = async () => {
+  const handleToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     const nuevoEstado = !alertaActiva;
     setAlertaActiva(nuevoEstado); // Optimistic UI update
 
@@ -102,11 +103,14 @@ function WatchlistCard({ item, removeFromWatchlist, formatCurrency }: { item: an
   };
 
   return (
-    <div className="glass-card p-4 group relative overflow-hidden flex flex-col justify-between min-h-[160px]">
+    <div 
+      onClick={() => onSelectTicker(item.ticker)}
+      className="glass-card p-4 group relative overflow-hidden flex flex-col justify-between min-h-[160px] cursor-pointer hover:border-purple-500/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] transition-all duration-300"
+    >
       <div>
         <div className="flex justify-between items-start mb-3 pr-16">
           <div>
-            <div className="text-xl font-black">{item.ticker}</div>
+            <div className="text-xl font-black group-hover:text-purple-400 transition-colors">{item.ticker}</div>
             <div className="text-[10px] text-gray-500 font-mono">{item.fecha_analisis}</div>
           </div>
         </div>
@@ -114,8 +118,8 @@ function WatchlistCard({ item, removeFromWatchlist, formatCurrency }: { item: an
         {/* Acciones Superiores: Eliminar y Alerta */}
         <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
           <button 
-            onClick={() => removeFromWatchlist(item.ticker)}
-            className="opacity-0 group-hover:opacity-100 transition-all p-1.5 hover:bg-red-500/10 text-gray-500 hover:text-red-400 rounded-lg"
+            onClick={(e) => { e.stopPropagation(); removeFromWatchlist(item.ticker); }}
+            className="opacity-0 group-hover:opacity-100 transition-all p-1.5 hover:bg-red-500/10 text-gray-500 hover:text-red-400 rounded-lg cursor-pointer"
             title="Eliminar de seguimiento"
           >
             <Trash className="w-4 h-4" />
@@ -337,6 +341,12 @@ export default function Home() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     executeSearch(ticker, periodo);
+  };
+
+  const handleSelectWatchlistTicker = (selectedTicker: string) => {
+    setActiveTab('analisis');
+    executeSearch(selectedTicker, periodo);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const calcularFairPriceSimulado = () => {
@@ -1349,6 +1359,7 @@ export default function Home() {
                     item={item} 
                     removeFromWatchlist={removeFromWatchlist} 
                     formatCurrency={formatCurrency} 
+                    onSelectTicker={handleSelectWatchlistTicker}
                   />
                 ))}
               </div>
