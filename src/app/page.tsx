@@ -222,10 +222,13 @@ function ChatInputForm({ onSubmit, chatEscribiendo, ticker }: { onSubmit: (mensa
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
+    // Filtrar solo las entradas que provienen de <Line> (cuyo color empieza por #)
+    const linePayload = payload.filter((entry: any) => entry.color && entry.color.startsWith('#'));
+
     return (
       <div className="bg-[#18181b]/90 border border-white/10 backdrop-blur-xl p-4 rounded-xl shadow-2xl font-mono text-xs space-y-2 min-w-[160px]">
         <div className="text-gray-400 border-b border-white/10 pb-1 font-bold text-[11px] uppercase tracking-wider">{label}</div>
-        {payload.map((entry: any, index: number) => (
+        {linePayload.map((entry: any, index: number) => (
           <div key={index} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full shadow-sm" style={{ backgroundColor: entry.color, boxShadow: `0 0 8px ${entry.color}` }} />
