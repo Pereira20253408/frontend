@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Search, Activity, DollarSign, Award, ArrowUpRight, ArrowDownRight, Loader2, Bell, Trash, Info } from "lucide-react";
-import { ResponsiveContainer, AreaChart, Area, ComposedChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, ComposedChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -45,6 +45,11 @@ interface AnalysisResult {
   veredicto_final: string;
   wacc_default?: number;
   growth_default?: number;
+  analistas_targets?: {
+    alto: number | null;
+    moderado: number | null;
+    bajo: number | null;
+  };
 }
 
 interface IAResult {
@@ -341,6 +346,29 @@ export default function Home() {
   };
 
   const fairPriceSimulado = calcularFairPriceSimulado();
+
+  const calcularProyeccion5Anios = () => {
+    if (!data) return [];
+    const baseAlto = data.analistas_targets?.alto || data.valor_intrinseco.precio_actual || 100;
+    const baseModerado = data.analistas_targets?.moderado || data.valor_intrinseco.precio_actual || 90;
+    const baseBajo = data.analistas_targets?.bajo || data.valor_intrinseco.precio_actual || 80;
+
+    const g = crecimientoEst / 100;
+    const proyeccion = [];
+
+    for (let año = 1; año <= 5; año++) {
+      proyeccion.push({
+        año: `Año ${año}`,
+        Optimista: Math.round(baseAlto * Math.pow(1 + g, año) * 100) / 100,
+        Moderado: Math.round(baseModerado * Math.pow(1 + g, año) * 100) / 100,
+        Pesimista: Math.round(baseBajo * Math.pow(1 + g, año) * 100) / 100,
+      });
+    }
+
+    return proyeccion;
+  };
+
+  const datosProyeccion = calcularProyeccion5Anios();
 
   const handleChatSubmit = async (userMsg: string) => {
     if (!userMsg.trim() || !data?.ticker) return;
@@ -843,6 +871,58 @@ export default function Home() {
                         <br/><span className="text-white/40 mt-2 block italic">Actualizado al: {data.valor_intrinseco.fecha}</span>
                       </p>
                     </div>
+                  </div>
+                </div>
+
+                {/* Proyección a 5 Años (Consenso Profesional) */}
+                <div className="mt-8 glass-card p-6 border border-white/10 bg-[#121212]/80 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                      <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+                        <Activity className="w-5 h-5 text-purple-400" />
+                        Proyección de Precio a 5 Años (Consenso Profesional)
+                      </h2>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Trayectoria estimada basada en el crecimiento actual ({crecimientoEst.toFixed(1)}%) sobre los objetivos de analistas en Wall Street.
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-lg shadow-[#10B981]/50" />
+                        <span className="text-gray-300">Optimista: {formatCurrency(data.analistas_targets?.alto || null)}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#60A5FA] shadow-lg shadow-[#60A5FA]/50" />
+                        <span className="text-gray-300">Moderado: {formatCurrency(data.analistas_targets?.moderado || null)}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#EF4444] shadow-lg shadow-[#EF4444]/50" />
+                        <span className="text-gray-300">Pesimista: {formatCurrency(data.analistas_targets?.bajo || null)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="h-[320px] w-full mt-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={datosProyeccion} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#262626" vertical={false} />
+                        <XAxis dataKey="año" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={{ stroke: '#262626' }} />
+                        <YAxis stroke="#6b7280" fontSize={11} tickLine={false} axisLine={{ stroke: '#262626' }} tickFormatter={(val) => `$${val}`} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: '#1a1a1a', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
+                          formatter={(value: any) => [`$${value}`, '']}
+                        />
+                        <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                        <Line type="monotone" dataKey="Optimista" stroke="#10B981" strokeWidth={3} dot={{ r: 4, fill: '#10B981', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
+                        <Line type="monotone" dataKey="Moderado" stroke="#60A5FA" strokeWidth={3} dot={{ r: 4, fill: '#60A5FA', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
+                        <Line type="monotone" dataKey="Pesimista" stroke="#EF4444" strokeWidth={3} dot={{ r: 4, fill: '#EF4444', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-gray-500">
+                    <span>Datos basados en el consenso consolidado de analistas institucionales en internet.</span>
+                    <span className="font-mono">Fuente: Finnhub Price Targets</span>
                   </div>
                 </div>
 
