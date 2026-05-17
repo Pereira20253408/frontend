@@ -904,19 +904,36 @@ export default function Home() {
 
                   <div className="h-[320px] w-full mt-4">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={datosProyeccion} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#262626" vertical={false} />
-                        <XAxis dataKey="año" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={{ stroke: '#262626' }} />
-                        <YAxis stroke="#6b7280" fontSize={11} tickLine={false} axisLine={{ stroke: '#262626' }} tickFormatter={(val) => `$${val}`} />
+                      <ComposedChart data={datosProyeccion} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="glowOptimista" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#10B981" stopOpacity={0.15} />
+                            <stop offset="100%" stopColor="#10B981" stopOpacity={0.0} />
+                          </linearGradient>
+                          <linearGradient id="glowModerado" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#60A5FA" stopOpacity={0.15} />
+                            <stop offset="100%" stopColor="#60A5FA" stopOpacity={0.0} />
+                          </linearGradient>
+                          <linearGradient id="glowPesimista" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#EF4444" stopOpacity={0.15} />
+                            <stop offset="100%" stopColor="#EF4444" stopOpacity={0.0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
+                        <XAxis dataKey="año" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} />
+                        <YAxis stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
                         <Tooltip
-                          contentStyle={{ backgroundColor: '#1a1a1a', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
+                          contentStyle={{ backgroundColor: "rgba(17, 24, 39, 0.8)", backdropFilter: "blur(8px)", borderRadius: "12px", borderColor: "#374151", fontSize: "12px", color: "#fff" }}
                           formatter={(value: any) => [`$${value}`, '']}
                         />
                         <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                        <Line type="monotone" dataKey="Optimista" stroke="#10B981" strokeWidth={3} dot={{ r: 4, fill: '#10B981', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
-                        <Line type="monotone" dataKey="Moderado" stroke="#60A5FA" strokeWidth={3} dot={{ r: 4, fill: '#60A5FA', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
-                        <Line type="monotone" dataKey="Pesimista" stroke="#EF4444" strokeWidth={3} dot={{ r: 4, fill: '#EF4444', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
-                      </LineChart>
+                        <Area type="monotone" dataKey="Optimista" fill="url(#glowOptimista)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
+                        <Area type="monotone" dataKey="Moderado" fill="url(#glowModerado)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
+                        <Area type="monotone" dataKey="Pesimista" fill="url(#glowPesimista)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
+                        <Line type="monotone" dataKey="Optimista" stroke="#10B981" strokeWidth={3} strokeDasharray="5 5" dot={{ r: 4, fill: '#10B981', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
+                        <Line type="monotone" dataKey="Moderado" stroke="#60A5FA" strokeWidth={4} dot={{ r: 4, fill: '#60A5FA', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
+                        <Line type="monotone" dataKey="Pesimista" stroke="#EF4444" strokeWidth={3} strokeDasharray="5 5" dot={{ r: 4, fill: '#EF4444', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
+                      </ComposedChart>
                     </ResponsiveContainer>
                   </div>
 
