@@ -216,6 +216,26 @@ function ChatInputForm({ onSubmit, chatEscribiendo, ticker }: { onSubmit: (mensa
   );
 }
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#18181b]/90 border border-white/10 backdrop-blur-xl p-4 rounded-xl shadow-2xl font-mono text-xs space-y-2 min-w-[160px]">
+        <div className="text-gray-400 border-b border-white/10 pb-1 font-bold text-[11px] uppercase tracking-wider">{label}</div>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full shadow-sm" style={{ backgroundColor: entry.color, boxShadow: `0 0 8px ${entry.color}` }} />
+              <span className="text-gray-300 capitalize">{entry.name}:</span>
+            </div>
+            <span className="font-bold text-white" style={{ color: entry.color }}>${entry.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'analisis' | 'watchlist'>('analisis');
   const [ticker, setTicker] = useState("");
@@ -875,71 +895,81 @@ export default function Home() {
                 </div>
 
                 {/* Proyección a 5 Años (Consenso Profesional) */}
-                <div className="mt-8 glass-card p-6 border border-white/10 bg-[#121212]/80 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                    <div>
-                      <h2 className="text-xl font-bold flex items-center gap-2 text-white">
-                        <Activity className="w-5 h-5 text-purple-400" />
-                        Proyección de Precio a 5 Años (Consenso Profesional)
-                      </h2>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Trayectoria estimada basada en el crecimiento actual ({crecimientoEst.toFixed(1)}%) sobre los objetivos de analistas en Wall Street.
-                      </p>
+                <div className="mt-8 relative group">
+                  <div className="absolute -inset-px bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-emerald-500/20 rounded-2xl blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+                  <div className="relative glass-card p-6 border border-white/10 bg-gradient-to-b from-[#18181b]/90 to-[#121214]/90 backdrop-blur-2xl rounded-2xl shadow-2xl overflow-hidden">
+                    <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-8 border-b border-white/5 pb-6">
+                      <div>
+                        <div className="flex items-center gap-2.5 mb-1.5">
+                          <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
+                            <Activity className="w-5 h-5" />
+                          </div>
+                          <h2 className="text-xl font-extrabold tracking-tight text-white">
+                            Proyección de Precio a 5 Años <span className="text-purple-400 font-normal text-lg">(Consenso Profesional)</span>
+                          </h2>
+                        </div>
+                        <p className="text-xs text-gray-400 max-w-xl leading-relaxed">
+                          Trayectoria proyectada aplicando la tasa de crecimiento actual del <span className="text-purple-400 font-mono font-bold">{crecimientoEst.toFixed(1)}%</span> sobre los objetivos consolidados de analistas en Wall Street.
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
+                        <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+                          <div className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+                          <span className="font-bold">Optimista: {formatCurrency(data.analistas_targets?.alto || null)}</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#60A5FA]/10 border border-[#60A5FA]/30 text-[#60A5FA] shadow-[0_0_15px_rgba(96,165,250,0.15)]">
+                          <div className="w-2 h-2 rounded-full bg-[#60A5FA] animate-pulse" />
+                          <span className="font-bold">Moderado: {formatCurrency(data.analistas_targets?.moderado || null)}</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] shadow-[0_0_15px_rgba(239,68,68,0.15)]">
+                          <div className="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse" />
+                          <span className="font-bold">Pesimista: {formatCurrency(data.analistas_targets?.bajo || null)}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-lg shadow-[#10B981]/50" />
-                        <span className="text-gray-300">Optimista: {formatCurrency(data.analistas_targets?.alto || null)}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#60A5FA] shadow-lg shadow-[#60A5FA]/50" />
-                        <span className="text-gray-300">Moderado: {formatCurrency(data.analistas_targets?.moderado || null)}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#EF4444] shadow-lg shadow-[#EF4444]/50" />
-                        <span className="text-gray-300">Pesimista: {formatCurrency(data.analistas_targets?.bajo || null)}</span>
-                      </div>
+
+                    <div className="h-[340px] w-full mt-2 pr-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart data={datosProyeccion} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                          <defs>
+                            <linearGradient id="glowOptimista" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#10B981" stopOpacity={0.25} />
+                              <stop offset="100%" stopColor="#10B981" stopOpacity={0.0} />
+                            </linearGradient>
+                            <linearGradient id="glowModerado" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#60A5FA" stopOpacity={0.35} />
+                              <stop offset="100%" stopColor="#60A5FA" stopOpacity={0.02} />
+                            </linearGradient>
+                            <linearGradient id="glowPesimista" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#EF4444" stopOpacity={0.20} />
+                              <stop offset="100%" stopColor="#EF4444" stopOpacity={0.0} />
+                            </linearGradient>
+                            <filter id="glowLine" x="-20%" y="-20%" width="140%" height="140%">
+                              <feGaussianBlur stdDeviation="3" result="blur" />
+                              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                          <XAxis dataKey="año" stroke="#a1a1aa" fontSize={11} tickLine={false} axisLine={false} dy={10} />
+                          <YAxis stroke="#a1a1aa" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} dx={-10} />
+                          <Tooltip content={<CustomTooltip />} />
+                          <Area type="monotone" dataKey="Optimista" fill="url(#glowOptimista)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
+                          <Area type="monotone" dataKey="Moderado" fill="url(#glowModerado)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
+                          <Area type="monotone" dataKey="Pesimista" fill="url(#glowPesimista)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
+                          <Line type="monotone" dataKey="Optimista" stroke="#10B981" strokeWidth={3} strokeDasharray="6 6" dot={{ r: 5, fill: '#10B981', strokeWidth: 3, stroke: '#18181b' }} activeDot={{ r: 8, fill: '#10B981', stroke: '#ffffff', strokeWidth: 2 }} />
+                          <Line type="monotone" dataKey="Moderado" stroke="#60A5FA" strokeWidth={4} filter="url(#glowLine)" dot={{ r: 6, fill: '#60A5FA', strokeWidth: 3, stroke: '#18181b' }} activeDot={{ r: 9, fill: '#60A5FA', stroke: '#ffffff', strokeWidth: 3 }} />
+                          <Line type="monotone" dataKey="Pesimista" stroke="#EF4444" strokeWidth={3} strokeDasharray="6 6" dot={{ r: 5, fill: '#EF4444', strokeWidth: 3, stroke: '#18181b' }} activeDot={{ r: 8, fill: '#EF4444', stroke: '#ffffff', strokeWidth: 2 }} />
+                        </ComposedChart>
+                      </ResponsiveContainer>
                     </div>
-                  </div>
 
-                  <div className="h-[320px] w-full mt-4">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart data={datosProyeccion} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="glowOptimista" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#10B981" stopOpacity={0.15} />
-                            <stop offset="100%" stopColor="#10B981" stopOpacity={0.0} />
-                          </linearGradient>
-                          <linearGradient id="glowModerado" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#60A5FA" stopOpacity={0.15} />
-                            <stop offset="100%" stopColor="#60A5FA" stopOpacity={0.0} />
-                          </linearGradient>
-                          <linearGradient id="glowPesimista" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#EF4444" stopOpacity={0.15} />
-                            <stop offset="100%" stopColor="#EF4444" stopOpacity={0.0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
-                        <XAxis dataKey="año" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
-                        <Tooltip
-                          contentStyle={{ backgroundColor: "rgba(17, 24, 39, 0.8)", backdropFilter: "blur(8px)", borderRadius: "12px", borderColor: "#374151", fontSize: "12px", color: "#fff" }}
-                          formatter={(value: any) => [`$${value}`, '']}
-                        />
-                        <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                        <Area type="monotone" dataKey="Optimista" fill="url(#glowOptimista)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
-                        <Area type="monotone" dataKey="Moderado" fill="url(#glowModerado)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
-                        <Area type="monotone" dataKey="Pesimista" fill="url(#glowPesimista)" stroke="none" activeDot={false} legendType="none" tooltipType="none" />
-                        <Line type="monotone" dataKey="Optimista" stroke="#10B981" strokeWidth={3} strokeDasharray="5 5" dot={{ r: 4, fill: '#10B981', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
-                        <Line type="monotone" dataKey="Moderado" stroke="#60A5FA" strokeWidth={4} dot={{ r: 4, fill: '#60A5FA', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
-                        <Line type="monotone" dataKey="Pesimista" stroke="#EF4444" strokeWidth={3} strokeDasharray="5 5" dot={{ r: 4, fill: '#EF4444', strokeWidth: 2, stroke: '#121212' }} activeDot={{ r: 6, stroke: '#121212', strokeWidth: 2 }} />
-                      </ComposedChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-gray-500">
-                    <span>Datos basados en el consenso consolidado de analistas institucionales en internet.</span>
-                    <span className="font-mono">Fuente: Finnhub Price Targets</span>
+                    <div className="mt-6 p-3.5 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] text-gray-400 gap-3">
+                      <div className="flex items-center gap-2.5">
+                        <Info className="w-4 h-4 text-purple-400 flex-shrink-0" />
+                        <span>Datos basados en el consenso consolidado de analistas institucionales en internet.</span>
+                      </div>
+                      <span className="font-mono text-purple-400/80 font-semibold flex-shrink-0 sm:ml-auto">Fuente: Finnhub Price Targets</span>
+                    </div>
                   </div>
                 </div>
 
