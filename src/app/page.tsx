@@ -743,95 +743,38 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Tarjeta de Valoración con Simulación DCF */}
+                  {/* Tarjeta de Valoración DCF */}
                   <div className="glass-card p-6 flex flex-col justify-between md:col-span-1">
                     <div className="flex justify-between items-start mb-6">
                       <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
                         <DollarSign className="w-6 h-6" />
                       </div>
-                      <span className="text-xs text-gray-500 font-mono">DCF SIMULATOR</span>
+                      <span className="text-xs text-gray-500 font-mono">DCF VALUATION</span>
                     </div>
                     <div>
-                      <h3 className="text-gray-400 text-sm mb-4">Valor Intrínseco & Simulación</h3>
+                      <h3 className="text-gray-400 text-sm mb-4 border-t border-white/5 pt-4">Valoración Intrínseca (DCF)</h3>
                       <div className="space-y-4">
                         <div className="flex justify-between items-center">
-                          <TermTooltip term="Valor Estimado (DCF)" definition="Valor intrínseco original calculado por el sistema basado en los fundamentos actuales." />
-                          <span className="text-lg font-bold text-white">
+                          <TermTooltip term="Valor Estimado (DCF)" definition="Valor intrínseco calculado por el sistema mediante Flujos de Caja Descontados (DCF) basado en los fundamentos actuales." />
+                          <span className="text-lg font-bold text-green-400">
                             {formatCurrency(data.valor_intrinseco.dcf)}
                           </span>
                         </div>
                         <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                          <span className="text-sm font-medium text-purple-400">Fair Price Simulado</span>
-                          <span className="text-lg font-black text-purple-400">
-                            {formatCurrency(fairPriceSimulado)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium">Precio Actual</span>
-                          <span className="text-lg font-bold text-gray-300">
+                          <span className="text-sm font-medium text-gray-400">Precio Actual</span>
+                          <span className="text-lg font-bold text-white">
                             {formatCurrency(data.valor_intrinseco.precio_actual)}
                           </span>
                         </div>
                         <div className={cn(
-                          "mt-4 p-3 rounded-lg flex justify-between items-center overflow-visible",
-                          data.valor_intrinseco.infravalorada ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"
+                          "mt-4 p-3 rounded-lg flex justify-between items-center overflow-visible shadow-inner",
+                          data.valor_intrinseco.infravalorada ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
                         )}>
                           <TermTooltip term="MARGEN DE SEGURIDAD" definition="Diferencia entre el Precio Actual y el Valor Intrínseco (Fair Price). Comprar con un margen > 20% minimiza el riesgo de pérdida si el mercado cae." />
                           <span className="text-sm font-mono flex items-center gap-1 font-bold">
                             {data.valor_intrinseco.infravalorada ? <ArrowDownRight className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
                             {data.valor_intrinseco.margen_seguridad_porcentaje}%
                           </span>
-                        </div>
-
-                        {/* Controles del Simulador DCF */}
-                        <div className="pt-4 border-t border-white/10 space-y-3">
-                          <div>
-                            <div className="flex justify-between text-xs mb-1">
-                              <span className="text-gray-400">Crecimiento Estimado (5A)</span>
-                              <span className="font-mono text-purple-400 font-bold">{crecimientoEst.toFixed(1)}%</span>
-                            </div>
-                            <input
-                              type="range"
-                              min={1}
-                              max={25}
-                              step="0.1"
-                              value={crecimientoEst}
-                              onChange={(e) => setCrecimientoEst(parseFloat(e.target.value))}
-                              className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                            />
-                          </div>
-
-                          <div>
-                            <div className="flex justify-between text-xs mb-1">
-                              <span className="text-gray-400">Tasa de Descuento (WACC)</span>
-                              <span className="font-mono text-purple-400 font-bold">{tasaDescuento.toFixed(1)}%</span>
-                            </div>
-                            <input
-                              type="range"
-                              min={5}
-                              max={15}
-                              step="0.1"
-                              value={tasaDescuento}
-                              onChange={(e) => setTasaDescuento(parseFloat(e.target.value))}
-                              className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                            />
-                          </div>
-
-                          <div>
-                            <div className="flex justify-between text-xs mb-1">
-                              <span className="text-gray-400">Crecimiento Terminal</span>
-                              <span className="font-mono text-purple-400 font-bold">{crecimientoTerminal.toFixed(1)}%</span>
-                            </div>
-                            <input
-                              type="range"
-                              min={1}
-                              max={5}
-                              step="0.1"
-                              value={crecimientoTerminal}
-                              onChange={(e) => setCrecimientoTerminal(parseFloat(e.target.value))}
-                              className="w-full accent-purple-500 bg-white/10 h-1.5 rounded-lg appearance-none cursor-pointer"
-                            />
-                          </div>
                         </div>
                       </div>
                     </div>
