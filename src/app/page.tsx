@@ -752,6 +752,81 @@ export default function Home() {
                       <span className="text-xs text-gray-500 font-mono">DCF VALUATION</span>
                     </div>
                     <div>
+                      {/* Gráfico de Barras Dual Vectorial SVG de Valoración */}
+                      {(() => {
+                        const price = data.valor_intrinseco.precio_actual || 0;
+                        const dcf = data.valor_intrinseco.dcf || 0;
+                        const isUndervalued = data.valor_intrinseco.infravalorada ?? (price < dcf);
+                        const maxVal = Math.max(price, dcf, 1);
+                        
+                        // Alturas dinámicas entre 20 y 75 px para mantener estética en SVG (viewBox 0 0 200 120)
+                        const heightPrice = (price / maxVal) * 55 + 20;
+                        const heightDcf = (dcf / maxVal) * 55 + 20;
+                        const yPrice = 95 - heightPrice;
+                        const yDcf = 95 - heightDcf;
+
+                        return (
+                          <div className="w-full h-[140px] flex flex-col items-center justify-center mb-4">
+                            <svg viewBox="0 0 200 120" className="w-full h-full max-w-[240px] overflow-visible drop-shadow-lg">
+                              <defs>
+                                <linearGradient id="priceBarGrad" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stopColor="#9CA3AF" />
+                                  <stop offset="100%" stopColor="#374151" />
+                                </linearGradient>
+                                <linearGradient id="dcfBarGradGreen" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stopColor="#10B981" />
+                                  <stop offset="100%" stopColor="#065F46" />
+                                </linearGradient>
+                                <linearGradient id="dcfBarGradRed" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stopColor="#EF4444" />
+                                  <stop offset="100%" stopColor="#991B1B" />
+                                </linearGradient>
+                                <linearGradient id="gapGradGreen" x1="0" y1="0" x2="1" y2="0">
+                                  <stop offset="0%" stopColor="#10B981" stopOpacity="0.05" />
+                                  <stop offset="100%" stopColor="#10B981" stopOpacity="0.30" />
+                                </linearGradient>
+                                <linearGradient id="gapGradRed" x1="0" y1="0" x2="1" y2="0">
+                                  <stop offset="0%" stopColor="#EF4444" stopOpacity="0.05" />
+                                  <stop offset="100%" stopColor="#EF4444" stopOpacity="0.30" />
+                                </linearGradient>
+                              </defs>
+
+                              {/* Línea base del suelo */}
+                              <line x1="20" y1="95" x2="180" y2="95" stroke="#262626" strokeWidth="4" strokeLinecap="round" />
+
+                              {/* Polígono de puente (Margen de Seguridad / Gap) */}
+                              <polygon 
+                                points={`75,${yPrice} 125,${yDcf} 125,95 75,95`} 
+                                fill={isUndervalued ? "url(#gapGradGreen)" : "url(#gapGradRed)"} 
+                              />
+                              <line 
+                                x1="75" y1={yPrice} x2="125" y2={yDcf} 
+                                stroke={isUndervalued ? "#10B981" : "#EF4444"} 
+                                strokeDasharray="3 3" strokeWidth="2" 
+                              />
+
+                              {/* Pilar Izquierdo: Precio Actual */}
+                              <rect x="35" y={yPrice} width="40" height={heightPrice} rx="6" fill="url(#priceBarGrad)" />
+                              <text x="55" y={yPrice - 8} fill="#E5E7EB" fontSize="12" fontWeight="bold" textAnchor="middle" className="font-mono">
+                                ${price.toFixed(1)}
+                              </text>
+                              <text x="55" y="112" fill="#9CA3AF" fontSize="10" textAnchor="middle" className="font-mono uppercase tracking-wider">
+                                Actual
+                              </text>
+
+                              {/* Pilar Derecho: Fair Value DCF */}
+                              <rect x="125" y={yDcf} width="40" height={heightDcf} rx="6" fill={isUndervalued ? "url(#dcfBarGradGreen)" : "url(#dcfBarGradRed)"} />
+                              <text x="145" y={yDcf - 8} fill={isUndervalued ? "#10B981" : "#EF4444"} fontSize="12" fontWeight="bold" textAnchor="middle" className="font-mono">
+                                ${dcf.toFixed(1)}
+                              </text>
+                              <text x="145" y="112" fill="#9CA3AF" fontSize="10" textAnchor="middle" className="font-mono uppercase tracking-wider">
+                                Fair Value
+                              </text>
+                            </svg>
+                          </div>
+                        );
+                      })()}
+
                       <h3 className="text-gray-400 text-sm mb-4 border-t border-white/5 pt-4">Valoración Intrínseca (DCF)</h3>
                       <div className="space-y-4">
                         <div className="flex justify-between items-center">
